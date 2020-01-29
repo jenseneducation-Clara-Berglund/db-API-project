@@ -1,19 +1,19 @@
+const cors = require("cors");
+const express = require("express");
+const app = express();
+
+const bodyParser = require("body-parser");
 const {
   getProductById,
   getCartById,
   getAllProducts,
   updateCartWithProducts
 } = require("./dbModule");
-var cors = require("cors");
-const express = require("express");
-const app = express();
 
-var bodyParser = require("body-parser");
 const port = 8000;
 
 app.use(cors());
 app.use(bodyParser.json());
-// Set some defaults (required if your JSON file is empty)
 
 // posts product to cart
 app.post("/cart/:cartId/products", (request, response) => {
@@ -63,6 +63,13 @@ app.delete("/cart/:cartId/products/:productId", (request, response) => {
   response.send("product deleted from cart");
 });
 
+// Retrives cart by id
+app.get("/cart/:cartId", (request, response) => {
+  const cartId = parseInt(request.params.cartId);
+  const cart = getCartById(cartId);
+  response.send(cart);
+});
+
 // Retrieves individual product by id
 app.get("/products/:productId", (request, response) => {
   const productId = parseInt(request.params.productId);
@@ -74,12 +81,6 @@ app.get("/products/:productId", (request, response) => {
 app.get("/products", (request, response) => {
   const products = getAllProducts();
   response.send(products);
-});
-
-app.get("/cart/:cartId", (request, response) => {
-  const cartId = parseInt(request.params.cartId);
-  const cart = getCartById(cartId);
-  response.send(cart);
 });
 
 app.listen(port, () => {

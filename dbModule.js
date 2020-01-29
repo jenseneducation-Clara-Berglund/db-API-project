@@ -81,6 +81,11 @@ db.defaults({
 }).write();
 
 module.exports = {
+  getAllProducts: () => {
+    const products = db.get("products").value();
+    return products;
+  },
+
   getProductById: id => {
     const product = db
       .get("products")
@@ -96,11 +101,6 @@ module.exports = {
       .find({ id: id })
       .value();
     return cart;
-  },
-
-  getAllProducts: () => {
-    const products = db.get("products").value();
-    return products;
   },
 
   updateCartWithProducts: (id, products) => {

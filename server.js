@@ -1,9 +1,9 @@
-const low = require("lowdb");
-const FileSync = require("lowdb/adapters/FileSync");
-
-const adapter = new FileSync("db.json");
-const db = low(adapter);
-
+const {
+  getProductById,
+  getCartById,
+  getAllProducts,
+  updateCartWithProducts
+} = require("./dbModule");
 var cors = require("cors");
 const express = require("express");
 const app = express();
@@ -14,83 +14,66 @@ const port = 8000;
 app.use(cors());
 app.use(bodyParser.json());
 // Set some defaults (required if your JSON file is empty)
-db.defaults({
-  products: [
-    { id: 1, name: "shirt", price: "700sek", imgURL: "exempel.com" },
-    { id: 2, name: "pants", price: "500sek", imgURL: "exempel.com" },
-    { id: 3, name: "t-shirt", price: "300sek", imgURL: "exempel.com" },
-    { id: 4, name: "skirt", price: "700sek", imgURL: "exempel.com" },
-    { id: 5, name: "dress", price: "900sek", imgURL: "exempel.com" },
-    { id: 6, name: "jumper", price: "700sek", imgURL: "exempel.com" },
-    { id: 7, name: "cardigan", price: "700sek", imgURL: "exempel.com" },
-    { id: 8, name: "jeans", price: "650sek", imgURL: "exempel.com" },
-    { id: 9, name: "blouse", price: "550sek", imgURL: "exempel.com" },
-    { id: 10, name: "socks", price: "100sek", imgURL: "exempel.com" }
-  ],
-  shoppingCarts: [{ id: 1, userId: 1, products: [] }]
-}).write();
 
 // posts product to cart
 app.post("/cart/:cartId/products", (request, response) => {
-  const productId = request.body.productId;
-  const cartId = request.params.cartId;
-  const product = db
-    .get("products")
-    .find({ id: parseInt(productId) })
-    .value();
+  const productId = parseInt(request.body.productId);
+  const cartId = parseInt(request.params.cartId);
+  const product = getProductById(productId);
+  const cart = getCartById(cartId);
 
-  // retrieves the right cart
-  const cart = db
-    .get("shoppingCarts")
-    .find({ id: parseInt(cartId) })
-    .value();
+  const productExists =
+    cart.products.filter(product => product.id === productId).length > 0;
+  if (productExists) {
+    response.status(403).send("You already have that product!");
+    return;
+  }
 
   // pushes new product to cart
-  var currentProductsInCart = cart.products;
-  currentProductsInCart.push(product);
+  var updatedProductsInCart = cart.products;
+  updatedProductsInCart.push(product);
 
   //adds products to cart by id
-  db.get("shoppingCarts")
-    .find({ id: cartId })
-    .assign({ products: currentProductsInCart })
-    .write();
-  response.end(product.name + " was added to cart!");
+  updateCartWithProducts(cartId, updatedProductsInCart);
+  response.send(product.name + " was added to cart!");
 });
 
 // removes product from cart
 app.delete("/cart/:cartId/products/:productId", (request, response) => {
-  const productId = request.params.productId;
-  const cartId = request.params.cartId;
-  const cart = db
-    .get("shoppingCarts")
-    .find({ id: parseInt(cartId) })
-    .value();
+  const productId = parseInt(request.params.productId);
+  const cartId = parseInt(request.params.cartId);
+  const cart = getCartById(cartId);
+  const productDoesNotExist =
+    cart.products.filter(product => product.id === productId).length === 0;
+  if (productDoesNotExist) {
+    response.status(404).send("Product does not exist");
+    return;
+  }
   var updatedProductsInCart = cart.products.filter(product => {
     return parseInt(productId) !== product.id;
   });
 
-  db.get("shoppingCarts")
-    .find({ id: parseInt(cartId) })
-    .assign({ products: updatedProductsInCart })
-    .write();
-
+  updateCartWithProducts(cartId, updatedProductsInCart);
   response.send("product deleted from cart");
 });
 
 // Retrieves individual product by id
 app.get("/products/:productId", (request, response) => {
-  const productId = request.params.productId;
-  const product = db
-    .get("products")
-    .find({ id: parseInt(productId) })
-    .value();
+  const productId = parseInt(request.params.productId);
+  const product = getProductById(productId);
   response.send(product);
 });
 
 // Lists all products from db
 app.get("/products", (request, response) => {
-  const products = db.get("products");
+  const products = getAllProducts();
   response.send(products);
+});
+
+app.get("/cart/:cartId", (request, response) => {
+  const cartId = parseInt(request.params.cartId);
+  const cart = getCartById(cartId);
+  response.send(cart);
 });
 
 app.listen(port, () => {

@@ -29,6 +29,12 @@ app.post("/cart/:cartId/products", (request, response) => {
     return;
   }
 
+  const productDoesNotExistInDb =
+    getAllProducts().filter(product => product.id === productId).length === 0;
+  if (productDoesNotExistInDb) {
+    response.status(404).send("product does not exist");
+    return;
+  }
   // pushes new product to cart
   var updatedProductsInCart = cart.products;
   updatedProductsInCart.push(product);
@@ -46,7 +52,7 @@ app.delete("/cart/:cartId/products/:productId", (request, response) => {
   const productDoesNotExist =
     cart.products.filter(product => product.id === productId).length === 0;
   if (productDoesNotExist) {
-    response.status(404).send("Product does not exist");
+    response.status(404).send("Product does not exist in cart");
     return;
   }
   var updatedProductsInCart = cart.products.filter(product => {

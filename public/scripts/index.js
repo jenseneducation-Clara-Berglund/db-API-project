@@ -18,6 +18,7 @@ let viewAllProducts = async () => {
 };
 
 const handleProductsResponse = listOfProducts => {
+  document.getElementById("productsContainer").innerHTML = "";
   for (let i = 0; i < listOfProducts.length; i++) {
     let productObject = listOfProducts[i];
     let htmlElement = createHTMLElementForProduct(productObject);
@@ -53,6 +54,8 @@ const createHTMLElementForProduct = product => {
     addToCartTag.addEventListener("click", async () => {
       try {
         await addToCart(1, product.id);
+        await viewCart();
+        await viewAllProducts();
       } catch (error) {
         alert(error);
       }
@@ -93,6 +96,8 @@ let viewCart = async () => {
 };
 
 const handleCartResponse = cartObject => {
+  document.getElementById("cartItemsContainer").innerHTML = "";
+
   for (let i = 0; i < cartObject.products.length; i++) {
     let cartProduct = cartObject.products[i];
     let htmlElement = createHTMLElementForCartProduct(cartProduct);
@@ -123,6 +128,7 @@ const createHTMLElementForCartProduct = cartProduct => {
   removeFromCartTag.addEventListener("click", async () => {
     await removeFromCart(1, cartProduct.id);
     await viewCart();
+    await viewAllProducts();
   });
   removeFromCartTag.innerHTML = "Remove from cart";
   removeFromCartTag.className = "removeFromCartButton";

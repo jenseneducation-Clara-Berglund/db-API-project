@@ -38,16 +38,20 @@ const createHTMLElementForProduct = product => {
   priceTag.className = "productPrice";
   productContainer.appendChild(priceTag);
 
+  const isInCart = isProductInCart(product);
+
   var addToCartTag = document.createElement("BUTTON");
   addToCartTag.type = "button";
-  addToCartTag.addEventListener("click", async () => {
-    try {
-      await addToCart(1, product.id);
-    } catch (error) {
-      alert(error);
-    }
-  });
-  const isInCart = isProductInCart(product); //if true added to cart if false add to cart
+  if (!isInCart) {
+    addToCartTag.addEventListener("click", async () => {
+      try {
+        await addToCart(1, product.id);
+      } catch (error) {
+        alert(error);
+      }
+    });
+  }
+
   addToCartTag.innerHTML = isInCart ? "Added to cart" : "Add to cart";
   addToCartTag.className = isInCart ? "addedToCartButton" : "addToCartButton";
 

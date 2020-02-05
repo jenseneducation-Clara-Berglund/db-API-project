@@ -1,15 +1,14 @@
-let viewAllProdcuts = async () => {
+let viewAllProducts = async () => {
   try {
     let response = await fetchAllProducts();
     let responseAsJson = await response.json();
+    products = responseAsJson;
     console.log(responseAsJson);
     handleProductsResponse(responseAsJson);
   } catch (error) {
     alert(error);
   }
 };
-
-viewAllProdcuts();
 
 const handleProductsResponse = listOfProducts => {
   for (let i = 0; i < listOfProducts.length; i++) {
@@ -40,17 +39,32 @@ const createHTMLElementForProduct = product => {
   productContainer.appendChild(priceTag);
 
   var addToCartTag = document.createElement("BUTTON");
+  addToCartTag.type = "button";
   addToCartTag.addEventListener("click", async () => {
-    const response = await addToCart(1, product.id);
-    if (response.status === 403) {
-      alert(await response.text());
+    try {
+      await addToCart(1, product.id);
+    } catch (error) {
+      alert(error);
     }
   });
-  addToCartTag.innerHTML = "Add to cart";
-  addToCartTag.className = "addToCartButton";
+  const isInCart = isProductInCart(product); //if true added to cart if false add to cart
+  addToCartTag.innerHTML = isInCart ? "Added to cart" : "Add to cart";
+  addToCartTag.className = isInCart ? "addedToCartButton" : "addToCartButton";
+
   productContainer.appendChild(addToCartTag);
 
   return productContainer;
+};
+
+const isProductInCart = product => {
+  const productInCart =
+    cart.products.filter(cartProduct => cartProduct.id === product.id).length >
+    0;
+  if (productInCart) {
+    return true;
+  } else {
+    return false;
+  }
 };
 
 // access cart
@@ -59,14 +73,13 @@ let viewCart = async () => {
   try {
     let response = await fetchCart(1);
     let responseAsJson = await response.json();
+    cart = responseAsJson;
     console.log(responseAsJson);
     handleCartResponse(responseAsJson);
   } catch (error) {
     alert(error);
   }
 };
-
-viewCart();
 
 const handleCartResponse = cartObject => {
   for (let i = 0; i < cartObject.products.length; i++) {
@@ -106,3 +119,9 @@ const createHTMLElementForCartProduct = cartProduct => {
 
   return cartItemsContainer;
 };
+
+let cart = null;
+let products = null;
+viewCart().then(async () => {
+  await viewAllProducts();
+});

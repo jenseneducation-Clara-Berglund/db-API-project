@@ -8,7 +8,6 @@ body {
 
 #titleContainer {
   display: flex;
-  justify-content: center;
 }
 
 h1 {
@@ -16,15 +15,21 @@ h1 {
   font-size: 10em;
 }
 
+#mainContainer {
+  display: flex;
+  flex-direction: row;
+}
+
 #productsContainer {
-  width: 40em;
+  max-width: 50em;
   display: flex;
   flex-wrap: wrap;
   justify-content: flex-start;
 }
 
-productcontainer {
-  display: flex;
+.productContainer {
+  background-color: rgb(234, 234, 240);
+  margin: 1em;
 }
 
 .productName {
@@ -48,5 +53,40 @@ productcontainer {
 .addToCartButton {
   color: black;
   font-size: 1.5em;
+  border-radius: 1em;
+}
+
+#cartContainer {
+  height: auto;
+  width: 300px;
+  background-color: white;
+  margin: 1em;
+  display: flex;
+  flex-direction: column;
+}
+
+#cartItemsContainer {
+  background: white;
+  display: flex;
+  flex-direction: column;
+  margin: 1em;
+}
+
+.cartProductName {
+  font-size: 1em;
+}
+
+.cartProductPrice {
+  font-size: 1em;
+}
+
+.cartProductImage {
+  height: 3em;
+  width: 3em;
+}
+
+.removeFromCartButton {
+  color: black;
+  font-size: 1em;
   border-radius: 1em;
 }

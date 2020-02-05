@@ -13,7 +13,9 @@ const fetchCart = cartId => {
 };
 
 const removeFromCart = (cartId, productId) => {
-  return fetch(`${baseUrl}/cart/${cartId}/products/${productId}`);
+  return fetch(`${baseUrl}/cart/${cartId}/products/${productId}`, {
+    method: "DELETE"
+  });
 };
 
 const addToCart = (cartId, productId) => {

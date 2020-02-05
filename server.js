@@ -14,7 +14,7 @@ const port = 8000;
 
 app.use(cors());
 app.use(bodyParser.json());
-
+app.use(express.static("public"));
 // posts product to cart
 app.post("/cart/:cartId/products", (request, response) => {
   const productId = parseInt(request.body.productId);

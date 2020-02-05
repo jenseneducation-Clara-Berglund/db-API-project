@@ -54,6 +54,7 @@ h1 {
   color: black;
   font-size: 1.5em;
   border-radius: 1em;
+  margin: 0.5em;
 }
 
 #cartContainer {
@@ -89,12 +90,13 @@ h1 {
   color: black;
   font-size: 1em;
   border-radius: 1em;
-  background-color: rgb(182, 118, 118);
+  background-color: rgb(210, 103, 103);
 }
 
 .addedToCartButton {
   color: black;
   font-size: 1.5em;
   border-radius: 1em;
-  background-color: rgb(182, 118, 118);
+  background-color: rgb(210, 103, 103);
+  margin: 0.5em;
 }

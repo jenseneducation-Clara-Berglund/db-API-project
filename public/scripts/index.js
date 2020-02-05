@@ -1,3 +1,10 @@
+import {
+  fetchAllProducts,
+  fetchCart,
+  removeFromCart,
+  addToCart
+} from "./api.js";
+
 let viewAllProducts = async () => {
   try {
     let response = await fetchAllProducts();

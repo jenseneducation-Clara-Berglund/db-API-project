@@ -28,3 +28,5 @@ const addToCart = (cartId, productId) => {
     body: JSON.stringify(data)
   });
 };
+
+export { fetchAllProducts, fetchProduct, fetchCart, removeFromCart, addToCart };
